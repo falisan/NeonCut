@@ -1,0 +1,80 @@
+name: Build y publicar NEONCUT
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Descargar binarios del motor (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path resources\bin | Out-Null
+          Invoke-WebRequest -Uri "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe" -OutFile "resources\bin\yt-dlp.exe"
+
+          $release = Invoke-RestMethod -Uri "https://api.github.com/repos/BtbN/FFmpeg-Builds/releases/latest" -Headers @{ "User-Agent" = "neoncut-ci" }
+          $asset = $release.assets | Where-Object { $_.name -like "*win64-gpl.zip" -and $_.name -notlike "*shared*" } | Select-Object -First 1
+          Invoke-WebRequest -Uri $asset.browser_download_url -OutFile ffmpeg.zip
+          Expand-Archive -Path ffmpeg.zip -DestinationPath ffmpeg-extract -Force
+          $binFolder = Get-ChildItem -Path ffmpeg-extract -Recurse -Directory -Filter "bin" | Select-Object -First 1
+          Copy-Item "$($binFolder.FullName)\ffmpeg.exe" "resources\bin\ffmpeg.exe"
+          Copy-Item "$($binFolder.FullName)\ffprobe.exe" "resources\bin\ffprobe.exe"
+
+      - name: Descargar binarios del motor (macOS)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          mkdir -p resources/bin
+          curl -L -o resources/bin/yt-dlp "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos"
+          chmod +x resources/bin/yt-dlp
+
+          FFMPEG_URL=$(curl -s https://evermeet.cx/ffmpeg/info/ffmpeg/release | jq -r '.download.zip.url')
+          curl -L -o ffmpeg.zip "$FFMPEG_URL"
+          unzip -o ffmpeg.zip -d ffmpeg-extract
+          mv ffmpeg-extract/ffmpeg resources/bin/ffmpeg
+          chmod +x resources/bin/ffmpeg
+
+          FFPROBE_URL=$(curl -s https://evermeet.cx/ffmpeg/info/ffprobe/release | jq -r '.download.zip.url')
+          curl -L -o ffprobe.zip "$FFPROBE_URL"
+          unzip -o ffprobe.zip -d ffprobe-extract
+          mv ffprobe-extract/ffprobe resources/bin/ffprobe
+          chmod +x resources/bin/ffprobe
+
+      - name: Generar icono (Windows)
+        if: runner.os == 'Windows'
+        run: npm run icon
+
+      - name: Generar icono (macOS)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          npm run iconset
+          iconutil -c icns build/AppIcon.iconset -o build/icon.icns
+
+      - name: Compilar y publicar
+        run: npx electron-vite build && npx electron-builder --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

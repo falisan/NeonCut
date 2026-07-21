@@ -2,10 +2,12 @@ import { app } from 'electron'
 import { join } from 'path'
 import { existsSync } from 'fs'
 
+const IS_WIN = process.platform === 'win32'
+
 const BIN_NAMES = {
-  ytdlp: 'yt-dlp.exe',
-  ffmpeg: 'ffmpeg.exe',
-  ffprobe: 'ffprobe.exe'
+  ytdlp: IS_WIN ? 'yt-dlp.exe' : 'yt-dlp',
+  ffmpeg: IS_WIN ? 'ffmpeg.exe' : 'ffmpeg',
+  ffprobe: IS_WIN ? 'ffprobe.exe' : 'ffprobe'
 } as const
 
 function binDir(): string {

@@ -10,8 +10,10 @@ dist/
 # Motor empaquetado (binarios grandes; se descargan aparte, no se versionan)
 resources/bin/
 
-# Icono generado (se regenera con `npm run icon`)
+# Iconos generados (se regeneran con `npm run icon` / `npm run iconset`)
 build/icon.ico
+build/icon.icns
+build/AppIcon.iconset/
 
 # Datos locales de usuario (base de datos, configuracion)
 *.db

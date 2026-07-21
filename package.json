@@ -10,6 +10,7 @@
     "build": "electron-vite build",
     "start": "electron-vite preview",
     "icon": "node scripts/generate-icon.mjs",
+    "iconset": "node scripts/generate-iconset.mjs",
     "dist": "electron-vite build && electron-builder"
   },
   "dependencies": {
@@ -51,7 +52,8 @@
     ],
     "win": {
       "target": "nsis",
-      "icon": "build/icon.ico"
+      "icon": "build/icon.ico",
+      "artifactName": "${productName}-Setup-${version}.${ext}"
     },
     "nsis": {
       "oneClick": false,
@@ -60,6 +62,18 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "NEONCUT"
+    },
+    "mac": {
+      "target": ["dmg", "zip"],
+      "arch": ["universal"],
+      "icon": "build/icon.icns",
+      "category": "public.app-category.video",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "artifactName": "${productName}-${version}-mac.${ext}"
+    },
+    "dmg": {
+      "artifactName": "${productName}-${version}-mac.${ext}"
     },
     "publish": {
       "provider": "github",
