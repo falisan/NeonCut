@@ -72,6 +72,7 @@
       "category": "public.app-category.video",
       "hardenedRuntime": false,
       "gatekeeperAssess": false,
+      "x64ArchFiles": "Contents/Resources/bin/**",
       "artifactName": "${productName}-${version}-mac.${ext}"
     },
     "dmg": {
