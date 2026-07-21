@@ -81,7 +81,8 @@
     "publish": {
       "provider": "github",
       "owner": "falisan",
-      "repo": "NeonCut"
+      "repo": "NeonCut",
+      "releaseType": "release"
     }
   }
 }
