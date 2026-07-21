@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build output
+out/
+release/
+dist/
+*.tsbuildinfo
+
+# Motor empaquetado (binarios grandes; se descargan aparte, no se versionan)
+resources/bin/
+
+# Icono generado (se regenera con `npm run icon`)
+build/icon.ico
+
+# Datos locales de usuario (base de datos, configuracion)
+*.db
+*.db-journal
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS / herramientas locales
+.vscode/
+.claude/
+.DS_Store
+Thumbs.db
+
+# electron-builder
+builder-debug.yml
+builder-effective-config.yaml

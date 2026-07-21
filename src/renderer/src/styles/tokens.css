@@ -1,0 +1,54 @@
+:root {
+  /* 5.2 Paleta de color */
+  --bg-base: #0a0e17;
+  --bg-panel: #12182b;
+  --cyan: #00f5ff;
+  --magenta: #ff2bd6;
+  --violet: #8b2fff;
+  --yellow: #e8ff00;
+  --green: #00ff9c;
+  --red: #ff3860;
+  --text-main: #e6f1ff;
+  --text-muted: #7c8aa5;
+
+  --border-thin: 1px;
+  --border-med: 1.5px;
+  --radius: 2px;
+
+  /* 5.3 Tipografia — pilas de sistema como base offline;
+     sustituir por @font-face locales (Orbitron/Rajdhani/JetBrains Mono/Noto Sans JP) cuando se empaqueten. */
+  --font-display: 'Segoe UI Semibold', 'Arial Narrow', system-ui, sans-serif;
+  --font-body: 'Segoe UI', Inter, 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'Cascadia Mono', 'Consolas', 'Share Tech Mono', monospace;
+  --font-cjk: 'Yu Gothic', 'Meiryo', 'Noto Sans JP', sans-serif;
+
+  --tracking-display: 0.08em;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-med: 250ms;
+  --dur-glitch: 180ms;
+
+  /* Texture opacities (5.1 grunge controlado) */
+  --op-grid: 0.06;
+  --op-grain: 0.08;
+  --op-scanline: 0.05;
+
+  --glow-cyan: 0 0 6px rgba(0, 245, 255, 0.55), 0 0 18px rgba(0, 245, 255, 0.25);
+  --glow-magenta: 0 0 6px rgba(255, 43, 214, 0.5), 0 0 18px rgba(255, 43, 214, 0.22);
+  --glow-yellow: 0 0 6px rgba(232, 255, 0, 0.5), 0 0 16px rgba(232, 255, 0, 0.2);
+  --glow-green: 0 0 6px rgba(0, 255, 156, 0.5), 0 0 16px rgba(0, 255, 156, 0.2);
+  --glow-red: 0 0 6px rgba(255, 56, 96, 0.5), 0 0 16px rgba(255, 56, 96, 0.2);
+}
+
+:root[data-reduced-contrast='1'] {
+  --op-grid: 0;
+  --op-grain: 0;
+  --op-scanline: 0;
+  --glow-cyan: none;
+  --glow-magenta: none;
+  --glow-yellow: none;
+  --glow-green: none;
+  --glow-red: none;
+}

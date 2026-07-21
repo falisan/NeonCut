@@ -1,0 +1,442 @@
+@import './tokens.css';
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--cyan);
+  color: #00131a;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  letter-spacing: var(--tracking-display);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+a {
+  color: var(--cyan);
+}
+
+button {
+  font-family: var(--font-body);
+}
+
+code,
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* ---------- App shell texture layers (5.1 / 5.5 grunge controlado) ---------- */
+
+.app-shell {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-base);
+}
+
+.texture-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: linear-gradient(rgba(0, 245, 255, 1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 255, 1) 1px, transparent 1px);
+  background-size: 42px 42px;
+  opacity: var(--op-grid);
+}
+
+.texture-grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: var(--op-grain);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+.texture-scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  opacity: var(--op-scanline);
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(230, 241, 255, 0.8) 0px,
+    rgba(230, 241, 255, 0.8) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.app-content {
+  position: relative;
+  z-index: 3;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Frame / header, matches doc chrome ---------- */
+
+.doc-frame {
+  border: var(--border-med) solid var(--cyan);
+  margin: 6px;
+  border-radius: var(--radius);
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(0, 245, 255, 0.25);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  -webkit-app-region: drag;
+}
+
+.top-bar .brand {
+  color: var(--cyan);
+  font-family: var(--font-display);
+  letter-spacing: var(--tracking-display);
+}
+
+.top-bar .cjk {
+  font-family: var(--font-cjk);
+  color: var(--text-muted);
+}
+
+/* ---------- Panels ---------- */
+
+.panel {
+  background: var(--bg-panel);
+  border: var(--border-thin) solid rgba(0, 245, 255, 0.18);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.panel--cut-corner {
+  clip-path: polygon(0 8px, 8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
+}
+
+/* ---------- Buttons (5.6) ---------- */
+
+.btn {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 12px;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+  border: 1px solid transparent;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--cyan);
+  color: #00131a;
+  box-shadow: var(--glow-cyan);
+}
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(0, 245, 255, 0.8), 0 0 26px rgba(0, 245, 255, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--magenta);
+  border-color: var(--magenta);
+}
+.btn-secondary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--glow-magenta);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: rgba(124, 138, 165, 0.4);
+}
+.btn-ghost:hover:not(:disabled) {
+  color: var(--text-main);
+  border-color: var(--text-main);
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--red);
+  border-color: var(--red);
+}
+.btn-danger:hover:not(:disabled) {
+  box-shadow: var(--glow-red);
+}
+
+/* ---------- URL field with scan animation ---------- */
+
+.url-field {
+  position: relative;
+  width: 100%;
+}
+
+.url-field input {
+  width: 100%;
+  background: var(--bg-panel);
+  border: 1px solid rgba(0, 245, 255, 0.3);
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  outline: none;
+}
+
+.url-field input:focus {
+  border-color: var(--cyan);
+}
+
+.url-field .scan-bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0;
+}
+
+.url-field input:focus ~ .scan-bar {
+  opacity: 1;
+  animation: scan 1.4s linear infinite;
+}
+
+@keyframes scan {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
+/* ---------- Detection box motif (5.4) ---------- */
+
+.detection-box {
+  position: relative;
+  border: var(--border-med) solid var(--cyan);
+  border-radius: var(--radius);
+}
+
+.detection-box::before,
+.detection-box::after,
+.detection-box .corner-tl,
+.detection-box .corner-br {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--yellow);
+  border-style: solid;
+}
+
+.detection-box::before {
+  top: -2px;
+  left: -2px;
+  border-width: 3px 0 0 3px;
+}
+.detection-box::after {
+  bottom: -2px;
+  right: -2px;
+  border-width: 0 3px 3px 0;
+}
+.detection-box .corner-tl {
+  top: -2px;
+  right: -2px;
+  border-width: 3px 3px 0 0;
+}
+.detection-box .corner-br {
+  bottom: -2px;
+  left: -2px;
+  border-width: 0 0 3px 3px;
+}
+
+.status-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.status-tag--cyan {
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
+}
+.status-tag--yellow {
+  border: 1px solid var(--yellow);
+  color: var(--yellow);
+}
+.status-tag--green {
+  border: 1px solid var(--green);
+  color: var(--green);
+}
+.status-tag--red {
+  border: 1px solid var(--red);
+  color: var(--red);
+}
+
+/* ---------- Console / motor log (5.6) ---------- */
+
+.engine-console {
+  background: #050709;
+  border: 1px solid rgba(0, 255, 156, 0.25);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--green);
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+/* ---------- Progress bar ---------- */
+
+.progress-track {
+  position: relative;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, var(--cyan), var(--magenta));
+  border-radius: 3px;
+  transition: width var(--dur-med) var(--ease-out);
+}
+
+.progress-fill--indeterminate {
+  position: absolute;
+  inset: 0;
+  width: 40% !important;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--magenta), transparent);
+  animation: progress-sweep 1.2s ease-in-out infinite;
+}
+
+@keyframes progress-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
+/* ---------- Modal ---------- */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 7, 10, 0.72);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal-box {
+  background: var(--bg-panel);
+  border: 1px solid rgba(0, 245, 255, 0.3);
+  clip-path: polygon(0 12px, 12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+  max-width: 560px;
+  width: 90%;
+  padding: 24px;
+}
+
+/* ---------- Tooltip ---------- */
+
+.tooltip {
+  background: var(--bg-panel);
+  border: 1px solid var(--cyan);
+  clip-path: polygon(0 6px, 6px 0, 100% 0, 100% 100%, 0 100%);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 6px 10px;
+  color: var(--text-main);
+}
+
+/* ---------- Scrollbars ---------- */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 245, 255, 0.25);
+  border-radius: 4px;
+}
+
+/* ---------- Glitch transition ---------- */
+
+@keyframes glitch-rgb {
+  0% {
+    text-shadow: -2px 0 var(--magenta), 2px 0 var(--cyan);
+  }
+  50% {
+    text-shadow: 2px 0 var(--magenta), -2px 0 var(--cyan);
+  }
+  100% {
+    text-shadow: 0 0 transparent;
+  }
+}
+
+.glitch-once {
+  animation: glitch-rgb var(--dur-glitch) steps(2, end);
+}
