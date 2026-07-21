@@ -64,8 +64,10 @@
       "shortcutName": "NEONCUT"
     },
     "mac": {
-      "target": ["dmg", "zip"],
-      "arch": ["universal"],
+      "target": [
+        { "target": "dmg", "arch": ["universal"] },
+        { "target": "zip", "arch": ["universal"] }
+      ],
       "icon": "build/icon.icns",
       "category": "public.app-category.video",
       "hardenedRuntime": false,
